@@ -1,62 +1,63 @@
-  version: '3.8'
+version: '3.8'
 
-  services:
-    btcpayserver:
-      image: btcpayserver/btcpayserver:2.0.6
-      restart: always
-      ports:
-        - "3001:3001"
-      environment:
-        BTCPAY_HOST: "http://0.0.0.0:3001"
-        BTCPAY_PORT: "3001"
-        BTCPAY_BIND: "0.0.0.0:3001"
-        BTCPAY_NETWORK: "testnet"
-        BTCPAY_BTCEXPLORERURL: "http://nbxplorer:24444"
-        BTCPAY_POSTGRES: "User ID=postgres;Password=postgres;Host=postgres;Port=5432"
-      depends_on:
-        - nbxplorer
-        - postgres
-      volumes:
-        - btcpay_data:/data
+services:
+  btcpayserver:
+    image: btcpayserver/btcpayserver:${BTCPAY_VERSION}
+    restart: always
+    ports:
+      - "${BTCPAY_PORT}:${BTCPAY_PORT}"
+    environment:
+      BTCPAY_HOST: "${BTCPAY_HOST}"
+      BTCPAY_PORT: "${BTCPAY_PORT}"
+      BTCPAY_BIND: "${BTCPAY_BIND}"
+      BTCPAY_NETWORK: "${BTCPAY_NETWORK}"
+      BTCPAY_BTCEXPLORERURL: "${BTCPAY_BTCEXPLORERURL}"
+      BTCPAY_POSTGRES: "${BTCPAY_POSTGRES}"
+    depends_on:
+      - nbxplorer
+      - postgres
+    volumes:
+      - btcpay_data:/data
 
-    nbxplorer:
-      image: nicolasdorier/nbxplorer:2.5.20
-      restart: always
-      environment:
-        NBXPLORER_NETWORK: "testnet"
-        NBXPLORER_BTCRPCURL: "http://192.168.0.116:18332"
-        NBXPLORER_BTCRPCUSER: iuliuss1
-        NBXPLORER_BTCRPCPASSWORD: mgeli
-        NBXPLORER_BTCNODEENDPOINT: "192.168.0.116:18333"
-        NBXPLORER_CHAINS: "btc"
-        NBXPLORER_BIND: "0.0.0.0:24444"
-        NBXPLORER_ELECTRUM: "192.168.0.116:60001"
-        NBXPLORER_DB_HOST: "postgres"
-        NBXPLORER_DB_PORT: "5432"
-        NBXPLORER_DB_USER: postgres
-        NBXPLORER_DB_PASSWORD: postgres
-        NBXPLORER_DB_NAME: postgres
-        NBXPLORER_POSTGRES: "User ID=postgres;Password=postgres;Host=postgres;Port=5432"
-        NBXPLORER_NOAUTH: "true"
-      depends_on:
-        - postgres
-      volumes:
-        - nbxplorer_data:/data
-      ports:
-        - "24444:24444"
-    postgres:
-      image: postgres
-      restart: always
-      environment:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: postgres
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
-      ports:
-        - "5433:5432" 
+  nbxplorer:
+    image: nicolasdorier/nbxplorer:${NBXPLORER_VERSION}
+    restart: always
+    environment:
+      NBXPLORER_NETWORK: "${NBXPLORER_NETWORK}"
+      NBXPLORER_BTCRPCURL: "${NBXPLORER_BTCRPCURL}"
+      NBXPLORER_BTCRPCUSER: "${NBXPLORER_BTCRPCUSER}"
+      NBXPLORER_BTCRPCPASSWORD: "${NBXPLORER_BTCRPCPASSWORD}"
+      NBXPLORER_BTCNODEENDPOINT: "${NBXPLORER_BTCNODEENDPOINT}"
+      NBXPLORER_CHAINS: "${NBXPLORER_CHAINS}"
+      NBXPLORER_BIND: "${NBXPLORER_BIND}"
+      NBXPLORER_ELECTRUM: "${NBXPLORER_ELECTRUM}"
+      NBXPLORER_DB_HOST: "${NBXPLORER_DB_HOST}"
+      NBXPLORER_DB_PORT: "${NBXPLORER_DB_PORT}"
+      NBXPLORER_DB_USER: "${NBXPLORER_DB_USER}"
+      NBXPLORER_DB_PASSWORD: "${NBXPLORER_DB_PASSWORD}"
+      NBXPLORER_DB_NAME: "${NBXPLORER_DB_NAME}"
+      NBXPLORER_POSTGRES: "${NBXPLORER_POSTGRES}"
+      NBXPLORER_NOAUTH: "${NBXPLORER_NOAUTH}"
+    depends_on:
+      - postgres
+    volumes:
+      - nbxplorer_data:/data
+    ports:
+      - "${NBXPLORER_PORT}:${NBXPLORER_PORT}"
 
-  volumes:
-    btcpay_data:
-    postgres_data:
-    nbxplorer_data:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_INTERNAL_PORT}"
+
+volumes:
+  btcpay_data:
+  postgres_data:
+  nbxplorer_data:
